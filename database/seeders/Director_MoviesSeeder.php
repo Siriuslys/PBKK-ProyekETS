@@ -22,7 +22,9 @@ class Director_MoviesSeeder extends Seeder
             // Menghubungkan dengan 1 hingga 3 movie secara acak
             $randomMovies = $movies->random(rand(1, 3));
             foreach ($randomMovies as $movie) {
-                $director->movies()->attach($movie->id);
+                if ($movie->directors()->count() < 2) {
+                    $director->movies()->attach($movie->id);
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Models\Movie; // Import the Movie model
 use App\Http\Controllers\HomeController;
 
 Route::get('/', function () {
@@ -10,8 +10,22 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $movies = Movie::all(); 
+    return view('dashboard', compact('movies')); 
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+
+Route::get('/movie/{movie:slug}', function (Movie $movie) {
+    $movie->load('genres', 'actors', 'directors');
+    return view('movie', [
+        'movie' => $movie,
+        'movie_genres' => $movie->genres,
+        'movie_artis' => $movie->actors,
+        'director_movies'=>$movie->directors 
+    ]);
+})->middleware(['auth', 'verified'])->name('movie.show');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -21,4 +35,5 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-route::get('admin/dashboard', [HomeController::class, 'index'])->middleware((['auth', 'admin']));
+Route::get('admin/dashboard', [HomeController::class, 'index'])->middleware(['auth', 'admin']);
+
