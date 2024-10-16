@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('movie_id'); 
             $table->unsignedBigInteger('user_id');
             $table->tinyInteger('rating')->unsigned(); 
-            $table->text('komentar'); 
+            $table->text('message'); 
             $table->timestamps();
 
             // Menambahkan foreign key constraint

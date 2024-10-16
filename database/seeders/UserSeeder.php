@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Actor;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class ActorSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Actor::factory()->count(50)->create();
+        User::factory(50)->create();
     }
 }

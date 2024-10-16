@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Genre extends Model
 {
     use HasFactory;
+
+    public function movies()
+    {
+        return $this->belongsToMany(Movie::class, 'movie_genres'); // Specify the pivot table name if necessary
+    }
 }

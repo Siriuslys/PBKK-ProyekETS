@@ -14,6 +14,8 @@ class MovieSeeder extends Seeder
      */
     public function run(): void
     {
+        Movie::factory()->count(50)->create();
+        
         Movie::create([
             'title' => 'Deadpool & Wolverine',
             'slug' => Str::slug('deadpool-&-wolverine') . '-' . fake()->unique()->numberBetween(1000, 9999), // Generate the slug with a random number
