@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Models\Movie;
 use Illuminate\Support\Facades\Route;
-use App\Models\Movie; // Import the Movie model
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,15 +18,23 @@ Route::get('/dashboard', function () {
 
 
 
+
 Route::get('/movie/{movie:slug}', function (Movie $movie) {
-    $movie->load('genres', 'actors', 'directors');
+    $movie->load('genres', 'actors', 'directors','reviews');
+
+    $averageRating = $movie->reviews()->average('rating');
+
     return view('movie', [
         'movie' => $movie,
         'movie_genres' => $movie->genres,
         'movie_artis' => $movie->actors,
-        'director_movies'=>$movie->directors 
+        'director_movies'=>$movie->directors,
+        'reviews' => $movie->reviews, 
+        'averageRating' => $averageRating,
     ]);
 })->middleware(['auth', 'verified'])->name('movie.show');
+
+Route::post('/reviews/store/{movie}', [ReviewController::class, 'store'])->middleware(['auth'])->name('reviews.store');
 
 
 Route::middleware('auth')->group(function () {

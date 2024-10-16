@@ -21,7 +21,7 @@ class Movie_ArtisSeeder extends Seeder
         // Menghubungkan movie dan actor secara acak
         foreach ($movies as $movie) {
             // Menghubungkan dengan 1 hingga 3 actor secara acak
-            $randomActors = $actors->random(rand(1, 3));
+            $randomActors = $actors->random(rand(1, 4));
             foreach ($randomActors as $actor) {
                 $movie->actors()->attach($actor->id);
             }

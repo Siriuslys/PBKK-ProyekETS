@@ -25,4 +25,9 @@ class Movie extends Model
     return $this->belongsToMany(Director::class, 'director_movies');
 }
 
+        public function reviews()
+        {
+            return $this->hasMany(Review::class); // Adjust as necessary if the foreign key is different
+        }
+
 }
