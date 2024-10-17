@@ -9,6 +9,10 @@ class Genre extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function movies()
     {
         return $this->belongsToMany(Movie::class, 'movie_genres'); // Specify the pivot table name if necessary

@@ -11,6 +11,17 @@ class Movie extends Model
     /** @use HasFactory<\Database\Factories\MoviesFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'slug',
+        'age_rate',
+        'duration',
+        'password',
+        'release_date',
+        'poster',
+        'package'
+    ];
+
     public function actors()
     {
         return $this->belongsToMany(Actor::class, 'movie_artis'); // Specify the pivot table if different from the default
@@ -22,17 +33,17 @@ class Movie extends Model
     }
 
     public function directors()
-{
-    return $this->belongsToMany(Director::class, 'director_movies');
-}
+    {
+        return $this->belongsToMany(Director::class, 'director_movies');
+    }
 
-        public function reviews()
-        {
-            return $this->hasMany(Review::class); // Adjust as necessary if the foreign key is different
-        }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class); // Adjust as necessary if the foreign key is different
+    }
 
-        public function scopeFilter(Builder $query)
-        {
-            $query->where('title', 'like', '%' . request('search') . '%');
-        }
+    public function scopeFilter(Builder $query)
+    {
+        $query->where('title', 'like', '%' . request('search') . '%');
+    }
 }
