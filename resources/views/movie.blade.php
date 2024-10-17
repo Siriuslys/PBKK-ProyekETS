@@ -1,4 +1,5 @@
 <x-app-layout>
+    
     <div class="max-w-7xl mx-auto py-12">
         <div class="bg-white shadow rounded-lg p-6">
             <h2 class="text-3xl font-bold">{{ $movie->title }}</h2>
@@ -113,7 +114,7 @@
                 <div class="mt-4">
                     <h3 class="text-2xl font-bold">Reviews</h3>
                     @if($movie->reviews->isNotEmpty())
-                        @foreach($movie->reviews as $review)
+                        @foreach($reviews as $review)
                             <div class="border-b pb-2 mt-2">
                                 <strong>{{ $review->user->name }}</strong>
                                 <div class="flex items-center mt-1">
@@ -135,15 +136,14 @@
                                 @endif
                             </div>
                         @endforeach
-
                         <div class="mt-4">
                             {{ $reviews->links() }} {{-- This will render pagination controls --}}
                         </div>
                     @else
                         <p>No reviews available.</p>
                     @endif
-                </div>
-            </div>
+                    
+                
         </div>
     </div>
 </x-app-layout>

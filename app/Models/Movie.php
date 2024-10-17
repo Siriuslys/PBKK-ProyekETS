@@ -39,7 +39,7 @@ class Movie extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class); // Adjust as necessary if the foreign key is different
+        return $this->hasMany(Review::class); 
     }
 
     public function scopeFilter(Builder $query)

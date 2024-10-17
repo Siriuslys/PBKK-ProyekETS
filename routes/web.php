@@ -11,11 +11,13 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DirectorController;
+use App\Models\Genre;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/dashboard', function () {
     $user = Auth::user(); // Get the authenticated user
@@ -23,12 +25,30 @@ Route::get('/dashboard', function () {
 
     // Fetch movies where the package is less than or equal to the user's package and age_rate <= user's age
     $movies = Movie::where('package', '<=', $user->package)
-                   ->where('age_rate', '<=', $userAge)
-                   ->filter(request('search')) // Apply filter for search input
-                   ->latest()
-                   ->simplePaginate(5);
+                   ->where('age_rate', '<=', $userAge);
 
-    return view('dashboard', compact('movies')); 
+    // Fetch all genres
+    $genres = Genre::all();
+
+    // If there is a search query, apply filters to search across multiple fields
+    if ($search = request('search')) {
+        $movies->where(function ($query) use ($search) {
+            $query->where('title', 'like', '%' . $search . '%')
+                  ->orWhereHas('genres', function($query) use ($search) {
+                      $query->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('actors', function($query) use ($search) {
+                      $query->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('directors', function($query) use ($search) {
+                      $query->where('name', 'like', '%' . $search . '%');
+                  });
+        });
+    }
+
+    $movies = $movies->latest()->Simplepaginate(5);
+
+    return view('dashboard', compact('movies', 'genres')); 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -39,7 +59,7 @@ Route::get('/movie/{movie:slug}', function (Movie $movie) {
 
     $userReview = $movie->reviews()->where('user_id', auth()->id())->first();
 
-    $reviews = $movie->reviews()->simplePaginate(5);
+    $reviews = $movie->reviews()->Simplepaginate(5);
 
     return view('movie', [
         'movie' => $movie,
