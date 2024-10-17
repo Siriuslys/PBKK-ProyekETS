@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -11,7 +12,7 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DirectorController;
-use App\Models\Genre;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
@@ -19,58 +20,9 @@ Route::get('/', function () {
 });
 
 
-Route::get('/dashboard', function () {
-    $user = Auth::user(); // Get the authenticated user
-    $userAge = Carbon::parse($user->birth_date)->age;
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-    // Fetch movies where the package is less than or equal to the user's package and age_rate <= user's age
-    $movies = Movie::where('package', '<=', $user->package)
-                   ->where('age_rate', '<=', $userAge);
-
-    // Fetch all genres
-    $genres = Genre::all();
-
-    // If there is a search query, apply filters to search across multiple fields
-    if ($search = request('search')) {
-        $movies->where(function ($query) use ($search) {
-            $query->where('title', 'like', '%' . $search . '%')
-                  ->orWhereHas('genres', function($query) use ($search) {
-                      $query->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('actors', function($query) use ($search) {
-                      $query->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('directors', function($query) use ($search) {
-                      $query->where('name', 'like', '%' . $search . '%');
-                  });
-        });
-    }
-
-    $movies = $movies->latest()->Simplepaginate(5);
-
-    return view('dashboard', compact('movies', 'genres')); 
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-Route::get('/movie/{movie:slug}', function (Movie $movie) {
-    $movie->load('genres', 'actors', 'directors','reviews');
-
-    $averageRating = $movie->reviews()->average('rating');
-
-    $userReview = $movie->reviews()->where('user_id', auth()->id())->first();
-
-    $reviews = $movie->reviews()->Simplepaginate(5);
-
-    return view('movie', [
-        'movie' => $movie,
-        'movie_genres' => $movie->genres,
-        'movie_artis' => $movie->actors,
-        'director_movies'=>$movie->directors,
-        'reviews' => $reviews, 
-        'averageRating' => $averageRating,
-        'userReview' => $userReview,
-    ]);
-})->middleware(['auth', 'verified'])->name('movie.show');
+Route::get('/movie/{movie:slug}', [MovieController::class, 'show'])->middleware(['auth', 'verified'])->name('movie.show');
 
 Route::post('/reviews/store/{movie}', [ReviewController::class, 'store'])->middleware(['auth'])->name('reviews.store');
 Route::put('/reviews/update/{movie}', [ReviewController::class, 'update'])->middleware(['auth'])->name('reviews.update');

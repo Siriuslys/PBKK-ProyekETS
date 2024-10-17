@@ -14,11 +14,22 @@ class MovieController extends Controller
 {
     public function show(Movie $movie)
     {
+        $movie->load('genres', 'actors', 'directors', 'reviews');
+
         $averageRating = $movie->reviews()->average('rating');
 
-        return view('movie.show', [
+        $userReview = $movie->reviews()->where('user_id', auth()->id())->first();
+
+        $reviews = $movie->reviews()->latest()->simplePaginate(5);
+
+        return view('movie', [
             'movie' => $movie,
+            'movie_genres' => $movie->genres,
+            'movie_artis' => $movie->actors,
+            'director_movies' => $movie->directors,
+            'reviews' => $reviews,
             'averageRating' => $averageRating,
+            'userReview' => $userReview,
         ]);
     }
 
