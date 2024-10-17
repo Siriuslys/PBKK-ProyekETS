@@ -20,7 +20,7 @@ class User_MovieSeeder extends Seeder
         // Menghubungkan user dan movie secara acak
         foreach ($users as $user) {
             // Menghubungkan dengan 1 hingga 5 movie secara acak
-            $randomMovies = $movies->random(rand(1, 5));
+            $randomMovies = $movies->random(rand(1, 15));
             foreach ($randomMovies as $movie) {
                 $user->movies()->attach($movie->id);
             }

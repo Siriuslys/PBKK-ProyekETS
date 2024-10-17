@@ -23,7 +23,7 @@ class ReviewSeeder extends Seeder
         $users = User::all();
 
         // Menyisipkan 50 review acak
-        foreach (range(1, 50) as $index) {
+        foreach (range(1, 200) as $index) {
             Review::create([
                 'user_id' => $users->random()->id, // Ambil user secara acak
                 'movie_id' => $movies->random()->id, // Ambil movie secara acak

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('usertype')->default('user');
             $table->boolean('package')->default(false);
-            $table->timestamp('birth_date');
+            $table->date('birth_date');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

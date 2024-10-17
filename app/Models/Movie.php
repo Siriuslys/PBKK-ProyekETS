@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Movie extends Model
 {
@@ -30,4 +31,8 @@ class Movie extends Model
             return $this->hasMany(Review::class); // Adjust as necessary if the foreign key is different
         }
 
+        public function scopeFilter(Builder $query)
+        {
+            $query->where('title', 'like', '%' . request('search') . '%');
+        }
 }

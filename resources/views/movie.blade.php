@@ -110,10 +110,11 @@
     </form>
 
     {{-- Display existing reviews --}}
+    {{-- Display existing reviews --}}
     <div class="mt-4">
         <h3 class="text-2xl font-bold">Reviews</h3>
-        @if($movie->reviews->isNotEmpty())
-            @foreach($movie->reviews as $review)
+        @if($reviews->isNotEmpty())
+            @foreach($reviews as $review)
                 <div class="border-b pb-2 mt-2">
                     <strong>{{ $review->user->name }}</strong>
                     <div class="flex items-center mt-1"> {{-- Flex container for stars and rating --}}
@@ -127,10 +128,15 @@
                     <p>{{ $review->message }}</p>
                 </div>
             @endforeach
+
+            <div class="mt-4">
+                {{ $reviews->links() }} {{-- This will render pagination controls --}}
+            </div>
         @else
             <p>No reviews available.</p>
         @endif
     </div>
+
 </div>
 
 

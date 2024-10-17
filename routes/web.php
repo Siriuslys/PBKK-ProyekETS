@@ -1,10 +1,12 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\Movie;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -12,11 +14,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $movies = Movie::all(); 
+    $user = Auth::user(); // Get the authenticated user
+    $userAge = Carbon::parse($user->birth_date)->age;
+
+    // Fetch movies where the package is less than or equal to the user's package and age_rate <= user's age
+    $movies = Movie::where('package', '<=', $user->package)
+                   ->where('age_rate', '<=', $userAge)
+                   ->filter(request('search')) // Apply filter for search input
+                   ->latest()
+                   ->simplePaginate(5);
+
     return view('dashboard', compact('movies')); 
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-
 
 
 Route::get('/movie/{movie:slug}', function (Movie $movie) {
@@ -24,12 +33,14 @@ Route::get('/movie/{movie:slug}', function (Movie $movie) {
 
     $averageRating = $movie->reviews()->average('rating');
 
+    $reviews = $movie->reviews()->simplePaginate(5);
+
     return view('movie', [
         'movie' => $movie,
         'movie_genres' => $movie->genres,
         'movie_artis' => $movie->actors,
         'director_movies'=>$movie->directors,
-        'reviews' => $movie->reviews, 
+        'reviews' => $reviews, 
         'averageRating' => $averageRating,
     ]);
 })->middleware(['auth', 'verified'])->name('movie.show');

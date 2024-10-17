@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Movie;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class MovieController extends Controller
 {
@@ -18,4 +19,14 @@ class MovieController extends Controller
             'averageRating' => $averageRating,
         ]);
     }
+
+        public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $results = Movie::where('name', 'like', "%$search%")->get();
+
+        return view('products.index', ['results' => $results]);
+    }
+
+    
 }
